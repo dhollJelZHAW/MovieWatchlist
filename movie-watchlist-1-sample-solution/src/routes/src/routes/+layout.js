@@ -1,0 +1,1 @@
+export const prerender = true;git config --global user.email "your_email" 
