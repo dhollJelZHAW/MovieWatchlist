@@ -1,0 +1,37 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+        working-directory: movie-watchlist-1-sample-solution
+      - run: npm run build
+        working-directory: movie-watchlist-1-sample-solution
+        env:
+          NODE_ENV: production
+      - run: touch movie-watchlist-1-sample-solution/build/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: movie-watchlist-1-sample-solution/build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
